@@ -1,3 +1,4 @@
+"use strict";
 // This sectin contains some game constants. It is not super interesting
 var GAME_WIDTH = 375;
 var GAME_HEIGHT = 500;
@@ -29,7 +30,7 @@ var COLLISION_DETECTION = true;
 
 // Preload game images
 var images = {};
-['enemy.png', 'stars.png', 'player.png', 'heart.png'].forEach(imgName => {
+['enemy.png', 'stars.png', 'player.png', 'heart.png', 'rainbowexplosion.png'].forEach(imgName => {
     var img = document.createElement('img');
     img.src = 'images/' + imgName;
     images[imgName] = img;
@@ -77,13 +78,13 @@ class Player extends Entity {
 
     // This method is called by the game engine when left/right arrows are pressed
     move(direction) {
-        if (direction === MOVE_LEFT && this.x > 0 && COLLISION_DETECTION)  {
+        if (direction === MOVE_LEFT && this.x > 0) {
             this.x = this.x - PLAYER_WIDTH;
-        } else if (direction === MOVE_RIGHT && this.x < GAME_WIDTH - PLAYER_WIDTH && COLLISION_DETECTION) {
+        } else if (direction === MOVE_RIGHT && this.x < GAME_WIDTH - PLAYER_WIDTH) {
             this.x = this.x + PLAYER_WIDTH;
-        } else if (direction === MOVE_DOWN && this.y < GAME_HEIGHT - (PLAYER_HEIGHT * 2) && COLLISION_DETECTION) {
+        } else if (direction === MOVE_DOWN && this.y < GAME_HEIGHT - (PLAYER_HEIGHT * 2)) {
             this.y = this.y + PLAYER_HEIGHT;
-        } else if (direction === MOVE_UP && this.y > 0 + PLAYER_HEIGHT && COLLISION_DETECTION) {
+        } else if (direction === MOVE_UP && this.y > 0 + PLAYER_HEIGHT) {
             this.y = this.y - PLAYER_HEIGHT;
         }
     }
@@ -152,7 +153,7 @@ class Engine {
         this.lastFrame = Date.now();
 
         // Listen for keyboard left/right and update the player
-         {
+        {
             document.addEventListener('keydown', e => {
                 if (e.keyCode === LEFT_ARROW_CODE) {
                     this.player.move(MOVE_LEFT);
@@ -184,7 +185,7 @@ class Engine {
         var currentFrame = Date.now();
         var timeDiff = currentFrame - this.lastFrame;
         // Increase the score!
-        this.score += timeDiff;
+        this.score += Math.floor(timeDiff / 10);
 
         // Call update on all enemies
         this.enemies.forEach(enemy => enemy.update(timeDiff));
@@ -195,14 +196,15 @@ class Engine {
         this.player.render(this.ctx); // draw the player
 
         if (!(this.isPlayerDead())) {
-            this.ctx.drawImage(images['heart.png'], 345, 0)
+            this.ctx.drawImage(images['heart.png'], 340, 0)
         }
         if (LIFE_COUNT >= 2) {
-            this.ctx.drawImage(images['heart.png'], 315, 0)
+            this.ctx.drawImage(images['heart.png'], 305, 0)
         }
         if (LIFE_COUNT === 3) {
-            this.ctx.drawImage(images['heart.png'], 285, 0)
+            this.ctx.drawImage(images['heart.png'], 270, 0)
         }
+
 
 
         // Check if any enemies should die
@@ -218,14 +220,16 @@ class Engine {
             //trigger for event listener
 
             // If they are dead, then it's game over!
+            if (this.isPlayerDead()) {
+                this.ctx.drawImage(images['rainbowexplosion.png'], this.player.x, this.player.y)
+            }
             this.ctx.font = 'bold 25px Impact';
             this.ctx.fillStyle = '#ffffff';
             this.ctx.fillText(this.score + ' GAME OVER', 5, 30);
             this.ctx.fillText("START OVER? PRESS ENTER", 40, 250)
-            //Once dead, option to start game
+                       //Once dead, option to start game
             document.addEventListener('keydown', e => {
                 if (e.keyCode === ENTER_KEY_CODE && LIFE_COUNT === 0) {
-                    
 
                     function removeElement(elementId) {
                         // Removes an element from the document
@@ -242,13 +246,13 @@ class Engine {
 
                     //when dead, 
                     removeElement('app')
-                    addElement('body', 'div', 'app');
+                    addElement();
+
+
                     LIFE_COUNT = 3;
                     COLLISION_DETECTION = true;
                     var gameEngine = new Engine(document.getElementById('app'));
-
                     gameEngine.start();
-
                 }
             });
         } else {
@@ -274,7 +278,9 @@ class Engine {
 
                     COLLISION_DETECTION = false
                     LIFE_COUNT--
-                    this.player = new Player();
+                    if (LIFE_COUNT !== 0) {
+                        this.player = new Player();
+                    }
                     setTimeout(() => COLLISION_DETECTION = true, 2000)
                     console.log(COLLISION_DETECTION)
                 }
