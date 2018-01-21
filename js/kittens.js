@@ -7,6 +7,15 @@ var ENEMY_WIDTH = 75;
 var ENEMY_HEIGHT = 156;
 var MAX_ENEMIES = 3;
 
+var BONUS_WIDTH = 75;
+var BONUS_HEIGHT = 156;
+var MAX_BONUS = 1;
+var BONUS_TIMER = 20000;
+var BONUS_FLAG = false;
+setInterval(() => BONUS_FLAG = true, BONUS_TIMER)
+var BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+console.log(BONUS_ORDER)
+
 var PLAYER_WIDTH = 75;
 var PLAYER_HEIGHT = 54;
 
@@ -30,7 +39,7 @@ var COLLISION_DETECTION = true;
 
 // Preload game images
 var images = {};
-['enemy.png', 'stars.png', 'player.png', 'heart.png', 'rainbowexplosion.png'].forEach(imgName => {
+['enemy.png', 'stars.png', 'player.png', 'heart.png', 'rainbowexplosion.png', 'tomato.png', 'patty.png', 'lettuce.png', 'cheese.png', 'buns.png'].forEach(imgName => {
     var img = document.createElement('img');
     img.src = 'images/' + imgName;
     images[imgName] = img;
@@ -46,13 +55,100 @@ class Entity {
         ctx.drawImage(this.sprite, this.x, this.y);
     }
 }
+//TODO: create patty entity #9c7051
+//TODO: create combo entities (buns, lettuce, cheese, tomato, patty)
+
+class BonusBuns extends Entity {
+    constructor(xPos) {
+        super();
+        this.x = xPos;
+        this.y = -BONUS_HEIGHT;
+        this.sprite = images['buns.png'];
+
+
+
+        // Each enemy should have a different speed
+        this.speed = Math.random() / 2 + 0.15;
+    }
+
+    update(timeDiff) {
+        this.y = this.y + timeDiff * this.speed;
+    }
+}
+class BonusLettuce extends Entity {
+    constructor(xPos) {
+        super();
+        this.x = xPos;
+        this.y = -BONUS_HEIGHT;
+        this.sprite = images['lettuce.png'];
+
+
+
+        // Each enemy should have a different speed
+        this.speed = Math.random() / 2 + 0.15;
+    }
+
+    update(timeDiff) {
+        this.y = this.y + timeDiff * this.speed;
+    }
+}
+class BonusCheese extends Entity {
+    constructor(xPos) {
+        super();
+        this.x = xPos;
+        this.y = -BONUS_HEIGHT;
+        this.sprite = images['cheese.png'];
+
+
+
+        // Each enemy should have a different speed
+        this.speed = Math.random() / 2 + 0.15;
+    }
+
+    update(timeDiff) {
+        this.y = this.y + timeDiff * this.speed;
+    }
+}
+class BonusTomato extends Entity {
+    constructor(xPos) {
+        super();
+        this.x = xPos;
+        this.y = -BONUS_HEIGHT;
+        this.sprite = images['tomato.png'];
+
+
+
+        // Each enemy should have a different speed
+        this.speed = Math.random() / 2 + 0.15;
+    }
+
+    update(timeDiff) {
+        this.y = this.y + timeDiff * this.speed;
+    }
+}
+class BonusPatty extends Entity {
+    constructor(xPos) {
+        super();
+        this.x = xPos;
+        this.y = -BONUS_HEIGHT;
+        this.sprite = images['patty.png'];
+
+
+
+        // Each enemy should have a different speed
+        this.speed = Math.random() / 2 + 0.15;
+    }
+
+    update(timeDiff) {
+        this.y = this.y + timeDiff * this.speed;
+    }
+}
+
 class Enemy extends Entity {
     constructor(xPos) {
         super();
         this.x = xPos;
         this.y = -ENEMY_HEIGHT;
-        console.log(`CLASS ENEMY Y IS ${this.y}`)
-        console.log(`CLASS ENEMY X IS ${this.x}`)
         this.sprite = images['enemy.png'];
 
 
@@ -76,6 +172,7 @@ class Player extends Entity {
         this.sprite = images['player.png'];
     }
 
+    //TODO: create shootPatty method based on pattyCount
     // This method is called by the game engine when left/right arrows are pressed
     move(direction) {
         if (direction === MOVE_LEFT && this.x > 0) {
@@ -107,6 +204,11 @@ class Engine {
 
         // Setup enemies, making sure there are always three
         this.setupEnemies();
+        this.setupBuns();
+        this.setupLettuce();
+        this.setupCheese();
+        this.setupTomato();
+        this.setupPatty();
 
         // Setup the <canvas> element where we will be drawing
         var canvas = document.createElement('canvas');
@@ -121,7 +223,7 @@ class Engine {
     }
 
     /*
-     The game allows for 5 horizontal slots where an enemy can be present.
+     The game allows for 5 horizontaenemySpotenemySpotl slots where an enemy can be present.
      At any point in time there can be at most MAX_ENEMIES enemies otherwise the game would be impossible
      */
     setupEnemies() {
@@ -131,6 +233,53 @@ class Engine {
 
         while (this.enemies.filter(e => !!e).length < MAX_ENEMIES) {
             this.addEnemy();
+        }
+    }
+
+    setupBuns() {
+        if (!this.buns) {
+            this.buns = [];
+        }
+
+        while (this.buns.filter(e => !!e).length < MAX_BONUS) {
+            this.addBuns();
+        }
+    }
+
+    setupLettuce() {
+        if (!this.lettuce) {
+            this.lettuce = [];
+        }
+
+        while (this.lettuce.filter(e => !!e).length < MAX_BONUS) {
+            this.addLettuce();
+        }
+    }
+    setupCheese() {
+        if (!this.cheese) {
+            this.cheese = [];
+        }
+
+        while (this.cheese.filter(e => !!e).length < MAX_BONUS) {
+            this.addCheese();
+        }
+    }
+    setupTomato() {
+        if (!this.tomato) {
+            this.tomato = [];
+        }
+
+        while (this.tomato.filter(e => !!e).length < MAX_BONUS) {
+            this.addTomato();
+        }
+    }
+    setupPatty() {
+        if (!this.patty) {
+            this.patty = [];
+        }
+
+        while (this.patty.filter(e => !!e).length < MAX_BONUS) {
+            this.addPatty();
         }
     }
 
@@ -145,6 +294,66 @@ class Engine {
         }
 
         this.enemies[enemySpot] = new Enemy((enemySpot * ENEMY_WIDTH));
+    }
+    addBuns() {
+        var bunsSpots = GAME_WIDTH / BONUS_WIDTH;
+
+        var bunsSpot;
+        // Keep looping until we find a free enemy spot at random
+        if (this.buns || Math.floor(Date.now() / 200) % 7)
+            while (this.buns[bunsSpot]) {
+                bunsSpot = Math.floor(Math.random() * bunsSpots);
+            }
+
+        this.buns[bunsSpot] = new BonusBuns((bunsSpot * BONUS_WIDTH));
+    }
+    addLettuce() {
+        var lettuceSpots = GAME_WIDTH / BONUS_WIDTH;
+
+        var lettuceSpot;
+        // Keep looping until we find a free enemy spot at random
+        if (this.lettuce || Math.floor(Date.now() / 200) % 7)
+            while (this.lettuce[lettuceSpot]) {
+                lettuceSpot = Math.floor(Math.random() * lettuceSpots);
+            }
+
+        this.lettuce[lettuceSpot] = new BonusLettuce((lettuceSpot * BONUS_WIDTH));
+    }
+    addCheese() {
+        var cheeseSpots = GAME_WIDTH / BONUS_WIDTH;
+
+        var cheeseSpot;
+        // Keep looping until we find a free enemy spot at random
+        if (this.cheese || Math.floor(Date.now() / 200) % 7)
+            while (this.cheese[cheeseSpot]) {
+                cheeseSpot = Math.floor(Math.random() * cheeseSpots);
+            }
+
+        this.cheese[cheeseSpot] = new BonusCheese((cheeseSpot * BONUS_WIDTH));
+    }
+    addTomato() {
+        var tomatoSpots = GAME_WIDTH / BONUS_WIDTH;
+
+        var tomatoSpot;
+        // Keep looping until we find a free enemy spot at random
+        if (this.tomato || Math.floor(Date.now() / 200) % 7)
+            while (this.tomato[tomatoSpot]) {
+                tomatoSpot = Math.floor(Math.random() * tomatoSpots);
+            }
+
+        this.tomato[tomatoSpot] = new BonusTomato((tomatoSpot * BONUS_WIDTH));
+    }
+    addPatty() {
+        var pattySpots = GAME_WIDTH / BONUS_WIDTH;
+
+        var pattySpot;
+        // Keep looping until we find a free enemy spot at random
+        if (this.patty || Math.floor(Date.now() / 200) % 7)
+            while (this.patty[pattySpot]) {
+                pattySpot = Math.floor(Math.random() * pattySpots);
+            }
+
+        this.patty[pattySpot] = new BonusPatty((pattySpot * BONUS_WIDTH));
     }
 
     // This method kicks off the game
@@ -185,24 +394,65 @@ class Engine {
         var currentFrame = Date.now();
         var timeDiff = currentFrame - this.lastFrame;
         // Increase the score!
-        this.score += Math.floor(timeDiff / 10);
+        this.score += Math.floor((timeDiff / 15));
 
         // Call update on all enemies
         this.enemies.forEach(enemy => enemy.update(timeDiff));
 
+        //updates on all bonuses
+        if (BONUS_ORDER === 1 && BONUS_FLAG === true) {
+            this.buns.forEach(bun => bun.update(timeDiff));
+        }
+        if (BONUS_ORDER === 2 && BONUS_FLAG === true) {
+            this.lettuce.forEach(lettuce => lettuce.update(timeDiff));
+        }
+        if (BONUS_ORDER === 3 && BONUS_FLAG === true) {
+            this.cheese.forEach(cheese => cheese.update(timeDiff));
+        }
+        if (BONUS_ORDER === 4 && BONUS_FLAG === true) {
+            this.tomato.forEach(tomato => tomato.update(timeDiff));
+        }
+        if (BONUS_ORDER === 5 && BONUS_FLAG === true)  {
+            this.patty.forEach(patty => patty.update(timeDiff));
+        }
+
+
         // Draw everything!
+        //TODO: draw new player image bassed on patty entity count
         this.ctx.drawImage(images['stars.png'], 0, 0); // draw the star bg
-        this.enemies.forEach(enemy => enemy.render(this.ctx)); // draw the enemiesg
-        this.player.render(this.ctx); // draw the player
+        this.enemies.forEach(enemy => enemy.render(this.ctx));
+
+        // bonuses
+        if (BONUS_ORDER === 1) {
+            this.buns.forEach(bun => bun.render(this.ctx));
+        }
+        if (BONUS_ORDER === 2) {
+            this.lettuce.forEach(lettuce => lettuce.render(this.ctx));
+        }
+        if (BONUS_ORDER === 3) {
+            this.cheese.forEach(cheese => cheese.render(this.ctx));
+        }
+        if (BONUS_ORDER === 4) {
+            this.tomato.forEach(tomato => tomato.render(this.ctx));
+        }
+        if (BONUS_ORDER === 5) {
+            this.patty.forEach(patty => patty.render(this.ctx));
+        }
+
+        // draw the enemiesg
+        var freq = 200
+        if (COLLISION_DETECTION || Math.floor(Date.now() / freq) % 2) {
+            this.player.render(this.ctx);
+        }
 
         if (!(this.isPlayerDead())) {
-            this.ctx.drawImage(images['heart.png'], 340, 0)
+            this.ctx.drawImage(images['heart.png'], 337, 3)
         }
         if (LIFE_COUNT >= 2) {
-            this.ctx.drawImage(images['heart.png'], 305, 0)
+            this.ctx.drawImage(images['heart.png'], 298, 3)
         }
         if (LIFE_COUNT === 3) {
-            this.ctx.drawImage(images['heart.png'], 270, 0)
+            this.ctx.drawImage(images['heart.png'], 258, 3)
         }
 
 
@@ -214,20 +464,117 @@ class Engine {
             }
         });
         this.setupEnemies();
+        // Check if any enemies should die
+        this.buns.forEach((bun, bunIdx) => {
+            if (bun.y > GAME_HEIGHT) {
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+
+                delete this.buns[bunIdx];
+                
+            }
+        });
+        console.log(BONUS_FLAG, BONUS_ORDER)
+        if (BONUS_FLAG === true && BONUS_ORDER === 1) {
+            BONUS_FLAG = false
+
+            this.setupBuns();
+            console.log(BONUS_FLAG);
+            
+
+        }
+
+        this.lettuce.forEach((lettuce, lettuceIdx) => {
+            if (lettuce.y > GAME_HEIGHT) {
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+
+                delete this.lettuce[lettuceIdx];
+              
+            }
+        });
+
+        if (BONUS_FLAG === true && BONUS_ORDER === 2) {
+            BONUS_FLAG = false
+
+            this.setupLettuce();
+            console.log(BONUS_FLAG);
+            
+
+        }
+
+        this.cheese.forEach((cheese, cheeseIdx) => {
+            if (cheese.y > GAME_HEIGHT) {
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+
+                delete this.cheese[cheeseIdx];
+              
+            }
+
+        });
+
+        if (BONUS_FLAG === true && BONUS_ORDER === 3) {
+            BONUS_FLAG = false
+
+            this.setupCheese();
+            console.log(BONUS_FLAG);
+            
+
+        }
+
+        this.tomato.forEach((tomato, tomatoIdx) => {
+            if (tomato.y > GAME_HEIGHT) {
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+
+                delete this.tomato[tomatoIdx];
+                
+
+            }
+        });
+
+        if (BONUS_FLAG === true && BONUS_ORDER === 4) {
+            BONUS_FLAG = false
+
+            this.setupTomato();
+            console.log(BONUS_FLAG);
+            
+
+        }
+
+        this.patty.forEach((patty, pattyIdx) => {
+            if (patty.y > GAME_HEIGHT) {
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+
+                delete this.patty[pattyIdx];
+               
+            }
+
+        });
+
+        if (BONUS_FLAG === true && BONUS_ORDER === 5) {
+            BONUS_FLAG = false
+  
+            this.setupPatty();
+            console.log(BONUS_FLAG);
+            
+
+        }
+
+
 
         // Check if player is dead
         if (this.isPlayerDead()) {
-            //trigger for event listener
-
             // If they are dead, then it's game over!
             if (this.isPlayerDead()) {
                 this.ctx.drawImage(images['rainbowexplosion.png'], this.player.x, this.player.y)
             }
             this.ctx.font = 'bold 25px Impact';
-            this.ctx.fillStyle = '#ffffff';
+            this.ctx.fillStyle = 'red';
+            this.ctx.strokeStyle = 'black'
+            this.ctx.lineWidth = 2;
             this.ctx.fillText(this.score + ' GAME OVER', 5, 30);
             this.ctx.fillText("START OVER? PRESS ENTER", 40, 250)
-                       //Once dead, option to start game
+            this.ctx.strokeText(this.score + ' GAME OVER', 5, 30);
+            this.ctx.strokeText('START OVER? PRESS ENTER', 40, 250)
+            //Once dead, option to start game
             document.addEventListener('keydown', e => {
                 if (e.keyCode === ENTER_KEY_CODE && LIFE_COUNT === 0) {
 
@@ -248,7 +595,6 @@ class Engine {
                     removeElement('app')
                     addElement();
 
-
                     LIFE_COUNT = 3;
                     COLLISION_DETECTION = true;
                     var gameEngine = new Engine(document.getElementById('app'));
@@ -259,7 +605,10 @@ class Engine {
             // If player is not dead, then draw the score
             this.ctx.font = 'bold 25px Impact';
             this.ctx.fillStyle = '#ffffff';
-            this.ctx.fillText(this.score, 5, 30);
+            this.ctx.strokeStyle = 'black'
+            this.ctx.lineWidth = 4;
+            this.ctx.strokeText(`SCORE : ${this.score}`, 5, 30);
+            this.ctx.fillText(`SCORE : ${this.score}`, 5, 30);
 
             // Set the time marker and redraw
             this.lastFrame = Date.now();
@@ -277,12 +626,12 @@ class Engine {
                     (PLAYER_HEIGHT) + this.player.y > enemy.y + (ENEMY_HEIGHT / 1.5) && COLLISION_DETECTION) {
 
                     COLLISION_DETECTION = false
+                    setTimeout(() => COLLISION_DETECTION = true, 2500)
                     LIFE_COUNT--
                     if (LIFE_COUNT !== 0) {
                         this.player = new Player();
                     }
-                    setTimeout(() => COLLISION_DETECTION = true, 2000)
-                    console.log(COLLISION_DETECTION)
+
                 }
             }
         });
