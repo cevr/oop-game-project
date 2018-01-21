@@ -10,7 +10,7 @@ var MAX_ENEMIES = 3;
 var BONUS_WIDTH = 75;
 var BONUS_HEIGHT = 156;
 var MAX_BONUS = 1;
-var BONUS_TIMER = 20000;
+var BONUS_TIMER = 30000;
 var BONUS_FLAG = false;
 setInterval(() => BONUS_FLAG = true, BONUS_TIMER)
 var BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
@@ -400,6 +400,7 @@ class Engine {
         this.enemies.forEach(enemy => enemy.update(timeDiff));
 
         //updates on all bonuses
+
         if (BONUS_ORDER === 1 && BONUS_FLAG === true) {
             this.buns.forEach(bun => bun.update(timeDiff));
         }
@@ -412,7 +413,7 @@ class Engine {
         if (BONUS_ORDER === 4 && BONUS_FLAG === true) {
             this.tomato.forEach(tomato => tomato.update(timeDiff));
         }
-        if (BONUS_ORDER === 5 && BONUS_FLAG === true)  {
+        if (BONUS_ORDER === 5 && BONUS_FLAG === true) {
             this.patty.forEach(patty => patty.update(timeDiff));
         }
 
@@ -423,21 +424,21 @@ class Engine {
         this.enemies.forEach(enemy => enemy.render(this.ctx));
 
         // bonuses
-        if (BONUS_ORDER === 1) {
-            this.buns.forEach(bun => bun.render(this.ctx));
-        }
-        if (BONUS_ORDER === 2) {
-            this.lettuce.forEach(lettuce => lettuce.render(this.ctx));
-        }
-        if (BONUS_ORDER === 3) {
-            this.cheese.forEach(cheese => cheese.render(this.ctx));
-        }
-        if (BONUS_ORDER === 4) {
-            this.tomato.forEach(tomato => tomato.render(this.ctx));
-        }
-        if (BONUS_ORDER === 5) {
-            this.patty.forEach(patty => patty.render(this.ctx));
-        }
+
+        this.buns.forEach(bun => bun.render(this.ctx));
+
+
+        this.lettuce.forEach(lettuce => lettuce.render(this.ctx));
+
+
+        this.cheese.forEach(cheese => cheese.render(this.ctx));
+
+
+        this.tomato.forEach(tomato => tomato.render(this.ctx));
+
+
+        this.patty.forEach(patty => patty.render(this.ctx));
+
 
         // draw the enemiesg
         var freq = 200
@@ -464,22 +465,23 @@ class Engine {
             }
         });
         this.setupEnemies();
-        // Check if any enemies should die
+        // Check if bonuses should die
+
         this.buns.forEach((bun, bunIdx) => {
             if (bun.y > GAME_HEIGHT) {
                 BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
 
                 delete this.buns[bunIdx];
-                
+                BONUS_FLAG = false;
+                setTimeout(() => BONUS_FLAG === true, BONUS_TIMER)
             }
         });
         console.log(BONUS_FLAG, BONUS_ORDER)
         if (BONUS_FLAG === true && BONUS_ORDER === 1) {
-            BONUS_FLAG = false
 
             this.setupBuns();
             console.log(BONUS_FLAG);
-            
+
 
         }
 
@@ -488,16 +490,17 @@ class Engine {
                 BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
 
                 delete this.lettuce[lettuceIdx];
-              
+                BONUS_FLAG = false;
+                setTimeout(() => BONUS_FLAG === true, BONUS_TIMER)
+
             }
         });
 
         if (BONUS_FLAG === true && BONUS_ORDER === 2) {
-            BONUS_FLAG = false
 
             this.setupLettuce();
             console.log(BONUS_FLAG);
-            
+
 
         }
 
@@ -506,17 +509,18 @@ class Engine {
                 BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
 
                 delete this.cheese[cheeseIdx];
-              
+                BONUS_FLAG = false;
+                setTimeout(() => BONUS_FLAG === true, BONUS_TIMER)
+
             }
 
         });
 
         if (BONUS_FLAG === true && BONUS_ORDER === 3) {
-            BONUS_FLAG = false
 
             this.setupCheese();
             console.log(BONUS_FLAG);
-            
+
 
         }
 
@@ -525,17 +529,18 @@ class Engine {
                 BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
 
                 delete this.tomato[tomatoIdx];
-                
+                BONUS_FLAG = false;
+                setTimeout(() => BONUS_FLAG === true, BONUS_TIMER)
+
 
             }
         });
 
         if (BONUS_FLAG === true && BONUS_ORDER === 4) {
-            BONUS_FLAG = false
 
             this.setupTomato();
             console.log(BONUS_FLAG);
-            
+
 
         }
 
@@ -544,17 +549,18 @@ class Engine {
                 BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
 
                 delete this.patty[pattyIdx];
-               
+                BONUS_FLAG = false;
+                setTimeout(() => BONUS_FLAG === true, BONUS_TIMER)
+
             }
 
         });
 
         if (BONUS_FLAG === true && BONUS_ORDER === 5) {
-            BONUS_FLAG = false
-  
+
             this.setupPatty();
             console.log(BONUS_FLAG);
-            
+
 
         }
 
@@ -597,6 +603,7 @@ class Engine {
 
                     LIFE_COUNT = 3;
                     COLLISION_DETECTION = true;
+                    BONUS_FLAG = false;
                     var gameEngine = new Engine(document.getElementById('app'));
                     gameEngine.start();
                 }
@@ -618,20 +625,16 @@ class Engine {
 
     isPlayerDead() {
         this.enemies.filter(enemy => {
+            if (this.player.x < enemy.x + (ENEMY_WIDTH / 2) &&
+                this.player.x + (PLAYER_WIDTH / 2) > enemy.x &&
+                this.player.y < enemy.y + (ENEMY_HEIGHT) &&
+                (PLAYER_HEIGHT) + this.player.y > enemy.y + (ENEMY_HEIGHT / 1.5) && COLLISION_DETECTION) {
 
-            if (COLLISION_DETECTION) {
-                if (this.player.x < enemy.x + (ENEMY_WIDTH / 2) &&
-                    this.player.x + (PLAYER_WIDTH / 2) > enemy.x &&
-                    this.player.y < enemy.y + (ENEMY_HEIGHT) &&
-                    (PLAYER_HEIGHT) + this.player.y > enemy.y + (ENEMY_HEIGHT / 1.5) && COLLISION_DETECTION) {
-
-                    COLLISION_DETECTION = false
-                    setTimeout(() => COLLISION_DETECTION = true, 2500)
-                    LIFE_COUNT--
-                    if (LIFE_COUNT !== 0) {
-                        this.player = new Player();
-                    }
-
+                COLLISION_DETECTION = false
+                setTimeout(() => COLLISION_DETECTION = true, 2500)
+                LIFE_COUNT--
+                if (LIFE_COUNT !== 0) {
+                    this.player = new Player();
                 }
             }
         });
