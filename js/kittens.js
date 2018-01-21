@@ -8,13 +8,12 @@ var ENEMY_HEIGHT = 156;
 var MAX_ENEMIES = 3;
 
 var BONUS_WIDTH = 75;
-var BONUS_HEIGHT = 156;
+var BONUS_HEIGHT = 75;
 var MAX_BONUS = 1;
-var BONUS_TIMER = 30000;
+var BONUS_TIMER = 3000;
 var BONUS_FLAG = false;
 setInterval(() => BONUS_FLAG = true, BONUS_TIMER)
 var BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
-console.log(BONUS_ORDER)
 
 var PLAYER_WIDTH = 75;
 var PLAYER_HEIGHT = 54;
@@ -476,11 +475,9 @@ class Engine {
                 setTimeout(() => BONUS_FLAG === true, BONUS_TIMER)
             }
         });
-        console.log(BONUS_FLAG, BONUS_ORDER)
         if (BONUS_FLAG === true && BONUS_ORDER === 1) {
 
             this.setupBuns();
-            console.log(BONUS_FLAG);
 
 
         }
@@ -499,7 +496,6 @@ class Engine {
         if (BONUS_FLAG === true && BONUS_ORDER === 2) {
 
             this.setupLettuce();
-            console.log(BONUS_FLAG);
 
 
         }
@@ -519,7 +515,6 @@ class Engine {
         if (BONUS_FLAG === true && BONUS_ORDER === 3) {
 
             this.setupCheese();
-            console.log(BONUS_FLAG);
 
 
         }
@@ -539,7 +534,6 @@ class Engine {
         if (BONUS_FLAG === true && BONUS_ORDER === 4) {
 
             this.setupTomato();
-            console.log(BONUS_FLAG);
 
 
         }
@@ -559,10 +553,66 @@ class Engine {
         if (BONUS_FLAG === true && BONUS_ORDER === 5) {
 
             this.setupPatty();
-            console.log(BONUS_FLAG);
 
 
         }
+        //collision detection for bonuses
+        this.buns.forEach((bun, bunIdx) => {
+            if (this.player.x < bun.x + BONUS_WIDTH &&
+                this.player.x + PLAYER_WIDTH > bun.x &&
+                this.player.y < bun.y + BONUS_HEIGHT &&
+                PLAYER_HEIGHT + this.player.y > bun.y && COLLISION_DETECTION) {
+                BONUS_FLAG = false;
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+                this.score += 1000
+                delete this.buns[bunIdx];
+            }
+        });
+        this.lettuce.forEach((lettuce, lettuceIdx) => {
+            if (this.player.x < lettuce.x + BONUS_WIDTH &&
+                this.player.x + PLAYER_WIDTH > lettuce.x &&
+                this.player.y < lettuce.y + BONUS_HEIGHT &&
+                PLAYER_HEIGHT + this.player.y > lettuce.y && COLLISION_DETECTION) {
+                BONUS_FLAG = false;
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+                this.score += 1000
+                delete this.lettuce[lettuceIdx];
+            }
+        });
+        this.cheese.forEach((cheese, cheeseIdx) => {
+            if (this.player.x < cheese.x + BONUS_WIDTH &&
+                this.player.x + PLAYER_WIDTH > cheese.x &&
+                this.player.y < cheese.y + BONUS_HEIGHT &&
+                PLAYER_HEIGHT + this.player.y > cheese.y && COLLISION_DETECTION) {
+                BONUS_FLAG = false;
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+                this.score += 1000
+                delete this.cheese[cheeseIdx];
+            }
+        });
+        this.tomato.forEach((tomato, tomatoIdx) => {
+            if (this.player.x < tomato.x + BONUS_WIDTH &&
+                this.player.x + PLAYER_WIDTH > tomato.x &&
+                this.player.y < tomato.y + BONUS_HEIGHT &&
+                PLAYER_HEIGHT + this.player.y > tomato.y && COLLISION_DETECTION) {
+                BONUS_FLAG = false;
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+                this.score += 1000
+                delete this.tomato[tomatoIdx];
+            }
+        });
+        this.patty.forEach((patty, pattyIdx) => {
+            if (this.player.x < patty.x + BONUS_WIDTH &&
+                this.player.x + PLAYER_WIDTH > patty.x &&
+                this.player.y < patty.y + BONUS_HEIGHT &&
+                PLAYER_HEIGHT + this.player.y > patty.y && COLLISION_DETECTION) {
+                BONUS_FLAG = false;
+                BONUS_ORDER = Math.floor(Math.random() * 5 + 1)
+                this.score += 1000
+                delete this.patty[pattyIdx];
+            }
+        });
+
 
 
 
@@ -641,6 +691,10 @@ class Engine {
 
         return LIFE_COUNT === 0 ? true : false;
     }
+
+
+
+
 }
 
 
